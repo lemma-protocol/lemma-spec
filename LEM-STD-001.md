@@ -1,14 +1,13 @@
-# LEM - Agent-Native Monetary Standard
-
+# LEM – Agent-Native Monetary Standard  
 ## Public Specification (LEM-STD-001)
 
-**Status:** Draft (Public)
+**Status:** Draft (Public v1 Candidate)
 
 ---
 
 ## 1. Introduction
 
-Money is one of the oldest coordination technologies created by humans. Every form of money - shells, gold, fiat, digital currency - encodes assumptions about **who uses it** and **how decisions are made**.
+Money is one of the oldest coordination technologies created by humans. Every form of money – shells, gold, fiat, digital currency – encodes assumptions about who uses it and how decisions are made.
 
 LEM (LEMMA) is a monetary standard designed for a new class of economic actors: **autonomous software agents**.
 
@@ -22,14 +21,14 @@ This document specifies the **LEM monetary protocol** in full. It is intended to
 
 LEM is designed to satisfy the following goals:
 
-1. **Agent-Native** - Assumes autonomous agents as primary economic actors
-2. **Neutral** - Encodes no incentives, purposes, or behavior
-3. **Fungible** - All units are identical in practice and semantics
-4. **Deterministic** - Same inputs always produce the same outputs
-5. **Minimal** - Defines only what is necessary for money
-6. **Stable** - Monetary semantics change extremely rarely
+1. **Agent-Native** – Autonomous agents are the primary economic actors  
+2. **Neutral** – No incentives, purposes, or behavior encoded  
+3. **Fungible** – All units are identical in semantics  
+4. **Deterministic** – Same inputs always produce the same outputs  
+5. **Minimal** – Defines only what is necessary for money  
+6. **Stable** – Monetary semantics change extremely rarely  
 
-LEM explicitly does **not** aim to optimize for speculation, governance, yield, or human UX.
+LEM explicitly does **not** optimize for speculation, governance, yield, or human UX.
 
 ---
 
@@ -38,7 +37,7 @@ LEM explicitly does **not** aim to optimize for speculation, governance, yield, 
 ### 3.1 In Scope
 
 LEM specifies:
-- Unit definition
+- Monetary unit definition
 - Ownership model
 - Transfer semantics
 - Supply rules
@@ -61,12 +60,12 @@ These concerns belong to higher-layer systems.
 
 ## 4. Terminology
 
-- **Agent:** Autonomous software capable of acting without human intervention
-- **LEM Unit:** Smallest indivisible unit of LEMMA
-- **Address:** Cryptographic identifier controlling LEM
-- **Wallet:** Software managing keys and transactions
-- **Ledger:** Replicated state machine enforcing LEM rules
-- **State:** Mapping of balances and nonces
+- **Agent:** Autonomous software capable of acting without human intervention  
+- **LEM:** Smallest indivisible unit of value  
+- **Address:** Cryptographic identifier controlling LEM  
+- **Wallet:** Software managing keys and transactions  
+- **Ledger:** Replicated state machine enforcing LEM rules  
+- **Ledger State:** Mapping of balances and nonces  
 
 ---
 
@@ -74,34 +73,31 @@ These concerns belong to higher-layer systems.
 
 All LEM-compliant implementations MUST preserve the following invariants:
 
-1. **Fungibility** - No LEM unit carries history-based meaning
-2. **Autonomous Ownership** - Ownership is defined solely by cryptographic control
-3. **Atomicity** - Transfers either fully succeed or fail
-4. **Finality** - Valid transfers are irreversible
-5. **Determinism** - Validation and execution are deterministic
+1. **Fungibility** – No LEM carries history-based meaning  
+2. **Autonomous Ownership** – Ownership is defined solely by cryptographic control  
+3. **Atomicity** – Transfers either fully succeed or fail  
+4. **Finality** – Valid transfers are irreversible  
+5. **Determinism** – Validation and execution are deterministic  
 
-Violation of any invariant constitutes a fork of the protocol.
+Violation of any invariant constitutes a protocol fork.
 
 ---
 
-## 6. Monetary Unit Definition
+## 6. Monetary Unit Definition (Normative)
 
-- **Currency Name:** LEMMA
-- **Symbol:** LEM
-- **Base Unit:** LEM
-- **Representation:** Unsigned integer
-- **Divisibility:** Fixed precision defined at protocol genesis
+- **Currency Name:** LEMMA  
+- **Symbol:** LEM  
+- **Base Unit:** LEM  
+- **Representation:** Unsigned integer  
+- **Divisibility:** Fixed at protocol genesis  
 
-All LEM values **MUST** be represented as unsigned integers.
-Floating-point, fractional, or approximate representations **MUST NOT** be used under any circumstances.
+All LEM values MUST be represented as unsigned integers.  
+Floating-point or approximate representations MUST NOT be used.
 
-The divisibility parameter:
-
-- **MUST** be defined at protocol genesis
-- **MUST NOT** be modified after genesis
-- **MUST** be interpreted identically by all compliant implementations
-
-Any implementation that permits non-integer arithmetic or variable precision **is non-compliant**.
+Divisibility:
+- MUST be defined at genesis  
+- MUST NOT change  
+- MUST be interpreted identically by all implementations  
 
 ---
 
@@ -129,17 +125,16 @@ LEM does not distinguish between agents, humans, or services.
 
 ### 8.1 Global State
 
-The LEM ledger state consists of:
-
+The ledger state consists of:
 - Mapping: Address → { balance, nonce }
 - Total circulating supply
-- Protocol identifier
+- Protocol Identifier
 
-No additional state is permitted at the currency layer.
+No additional state is permitted.
 
 ### 8.2 Determinism
 
-Given the same ordered list of valid transactions, all compliant implementations MUST converge to identical state.
+Given the same ordered list of valid transactions, all implementations MUST converge to identical state.
 
 ---
 
@@ -148,16 +143,15 @@ Given the same ordered list of valid transactions, all compliant implementations
 ### 9.1 Transaction Types
 
 LEM defines exactly one transaction type:
-
 - **TRANSFER**
 
 ### 9.2 Transfer Fields
 
-- Sender address
-- Receiver address
-- Amount
-- Nonce
-- Signature
+- Sender address  
+- Receiver address  
+- Amount  
+- Nonce  
+- Signature  
 
 No optional or extensible fields are allowed.
 
@@ -165,14 +159,14 @@ No optional or extensible fields are allowed.
 
 ## 10. Validation Rules
 
-A transfer transaction is valid if and only if:
+A transfer is valid if and only if:
 
-1. Amount > 0
-2. Sender address exists
-3. Sender balance ≥ amount
-4. Nonce equals sender.nonce + 1
-5. Signature is valid
-6. Transaction is not a replay
+1. Amount > 0  
+2. Sender address exists  
+3. Sender balance ≥ amount  
+4. Nonce = sender.nonce + 1  
+5. Signature is valid  
+6. Transaction is not a replay  
 
 Invalid transactions MUST be rejected without state change.
 
@@ -180,127 +174,107 @@ Invalid transactions MUST be rejected without state change.
 
 ## 11. Canonical Serialization and Signing
 
-All transactions MUST be signed over a canonical serialization of:
-
+Transactions MUST be signed over a canonical serialization of:
 - Transaction type
 - Sender address
 - Receiver address
 - Amount
 - Nonce
-- Protocol identifier
+- Protocol Identifier
 
-No timestamps, metadata, or contextual data may be included.
+No timestamps or metadata may be included.
 
 ---
 
 ## 12. State Transition Rules
 
-Upon applying a valid transfer:
-
-- Sender balance is reduced by amount
+Upon a valid transfer:
+- Sender balance is reduced
 - Sender nonce is incremented
-- Receiver balance is increased by amount
+- Receiver balance is increased
 - Total supply remains unchanged
 
-State transitions MUST be atomic and deterministic.
+Transitions MUST be atomic and deterministic.
 
 ---
 
-## 13. Supply Model
+## 13. Supply Model (Normative)
 
 ### 13.1 Genesis
 
-### 13.1 Genesis
-
-- The total initial LEM supply **MUST** be created at genesis.
-- The entire initial supply **MUST** be allocated to a single address referred to as the **Genesis Reserve**.
-- The Genesis Reserve address **MUST NOT** possess any special privileges beyond standard address ownership.
-
-Genesis allocation **MUST** be deterministic and reproducible by all implementations.
+- Entire supply MUST be created at genesis  
+- Entire supply MUST be allocated to a Genesis Reserve address  
+- Genesis Reserve has no special privileges  
 
 ### 13.2 Minting
 
-Minting, if present, **MUST** satisfy all of the following conditions:
-1. Minting rules **MUST** be defined at the protocol level.
-2. Minting **MUST** be deterministic.
-3. Minting **MUST NOT** depend on:
-   - Human intervention
-   - Governance votes
-   - External signals
-   - Transaction-triggered conditions
-4. User-initiated or transaction-triggered minting **MUST NOT** be permitted.
-   
-If minting rules are undefined, the protocol **MUST** be treated as having a fixed supply.
+If minting exists, it MUST:
+- Be protocol-defined  
+- Be deterministic  
+- Be non-interactive  
+
+User-triggered minting MUST NOT be permitted.  
+If undefined, supply is fixed.
 
 ### 13.3 Burning
 
-- Burning MUST be explicit and verifiable.
-- Burning MUST result in a provable reduction of total circulating supply.
-- Implicit burning mechanisms (for example, unspendable outputs or silent balance decay) MUST NOT be used.
-- Burning MUST NOT be triggered implicitly as a side effect of transfer validation or execution.
+- Burning MUST be explicit  
+- Burning MUST reduce total supply  
+- Implicit burning MUST NOT occur  
 
 ---
 
 ## 14. Wallet Semantics (Normative)
 
 LEM wallets MUST:
-
-- Generate and control cryptographic keys
+- Control cryptographic keys
 - Track balances and nonces
 - Construct valid transactions
-- Sign transactions deterministically
-- Verify ledger state independently
+- Sign deterministically
+- Verify ledger state independently  
 
-Wallets MUST be able to operate autonomously without human input.
+Appendix C provides non-normative reference behavior.
 
 ---
 
-## 15. Ledger and Consensus
+## 15. Ledger and Consensus (Normative)
 
-LEM is **ledger-agnostic**.
+LEM is ledger-agnostic.
 
-Any ledger or consensus mechanism hosting LEM **MUST** satisfy the following constraints:
-1. The mechanism **MUST** provide a total ordering of transactions.
-2. The mechanism **MUST NOT** alter, reinterpret, or extend LEM transaction semantics.
-3. The mechanism **MUST NOT** introduce metadata that affects balances, ownership, or validity.
-4. The mechanism **MUST** apply state transitions deterministically.
+Hosting mechanisms MUST:
+1. Provide total transaction ordering  
+2. Preserve LEM semantics  
+3. Apply deterministic state transitions  
 
-Permissible hosting mechanisms include, but are not limited to:
-- Public blockchains
-- Byzantine fault-tolerant replicated logs
-- Deterministic centralized sequencers
-
-Consensus mechanisms are responsible only for transaction ordering and availability.
-They **MUST NOT** influence monetary semantics, ownership rules, or supply behavior.
+Consensus determines ordering only.
 
 ---
 
 ## 16. Governance Boundary
 
 Governance MAY modify:
-- Implementation details
-- Networking parameters
+- Implementations
+- Networking
 - Bug fixes
 
 Governance MUST NOT modify:
-- Ownership semantics
+- Ownership
 - Transfer rules
 - Fungibility
-- Supply principles
+- Supply principles  
 
-Changes to these require a new protocol identifier.
+Such changes require a new Protocol Identifier.
 
 ---
 
 ## 17. Compliance and Conformance
 
 An implementation is LEM-compliant if:
-
-1. Any two addresses can transfer LEM without permission
-2. Transfers are atomic and final
-3. Balances are independently verifiable
-4. No metadata affects value
-5. Wallets operate autonomously
+1. Transfers are permissionless  
+2. Execution is atomic and final  
+3. Balances are verifiable  
+4. No metadata affects value  
+5. Wallets operate autonomously  
 
 ---
 
@@ -308,39 +282,111 @@ An implementation is LEM-compliant if:
 
 LEM security depends on:
 - Cryptographic primitives
-- Ledger ordering guarantees
-- Correct wallet key management
+- Ledger ordering
+- Key management  
 
-Economic and incentive security are explicitly out of scope.
+Economic security is out of scope.
 
 ---
 
 ## 19. Limitations
 
 LEM does not address:
-- Trust between agents
-- Fair pricing
-- Work verification
-- Compliance or regulation
-- Human governance
-
-These are higher-layer concerns.
+- Trust
+- Pricing
+- Governance
+- Regulation
+- Incentives  
 
 ---
 
 ## 20. Rationale
 
-LEM exists because existing currencies embed human judgment, incentives, and governance directly into money. Autonomous agents require money whose meaning is fixed, neutral, and free of interpretation.
+Existing money embeds human judgment and governance.  
+Autonomous agents require money with **fixed, neutral meaning**.
 
-LEM separates **money** from **economics**, enabling agent economies to evolve without destabilizing the currency they depend on.
+LEM separates **money** from **economics**.
 
 ---
 
 ## 21. Conclusion
 
-LEM defines a minimal, agent-native monetary substrate. It is intentionally boring, stable, and neutral. Its value lies not in speculation, but in becoming indispensable infrastructure for autonomous systems.
+LEM defines a minimal, agent-native monetary substrate.
 
-If autonomous agents become economic actors at scale, a currency like LEM becomes necessary. If they do not, LEM remains an academic exercise.
+If agent economies scale, LEM becomes infrastructure.  
+If they do not, LEM remains a deliberate experiment.
 
-That risk is deliberate.
+---
+
+## 22. Protocol Versioning and Compatibility Rules (Normative)
+
+- Every version is identified by a Protocol Identifier  
+- Semantic changes require a new identifier  
+- Unknown identifiers MUST NOT be executed  
+- Compatibility ends at the monetary layer  
+
+---
+
+# Appendix A: Canonical State Transition Examples (Non-Normative)
+
+## A.1 Initial State
+
+```
+Total Supply: 1000 LEM
+
+Address A: balance 600, nonce 3
+Address B: balance 250, nonce 7
+Address C: balance 150, nonce 0
+```
+
+## A.2 Valid Transfer
+
+Address A sends 100 LEM to Address B with nonce 4.
+
+Result:
+```
+Address A: balance 500, nonce 4
+Address B: balance 350, nonce 7
+```
+
+
+Total supply unchanged.
+
+## A.3 Invalid Transfers
+
+- Insufficient balance  
+- Incorrect nonce  
+- Replay of consumed nonce  
+
+All invalid transactions MUST be rejected without state change.
+
+---
+
+# Appendix B: Agent Assumptions  
+*(Non-Normative)*
+
+Agents interacting with LEM:
+- Operate autonomously
+- Control cryptographic keys
+- May be irrational or adversarial
+- May fail, halt, or disappear
+
+LEM assumes no trust, intent, identity, or accountability.
+
+---
+
+# Appendix C: Reference Wallet Behavior  
+*(Non-Normative)*
+
+Wallets are expected to:
+- Manage keys securely
+- Track balances and nonces
+- Construct valid transactions
+- Sign deterministically
+- Verify ledger state independently
+- Fail safely without heuristic recovery
+
+Wallets MUST NOT attempt protocol migration or semantic interpretation.
+
+---
 
