@@ -92,7 +92,16 @@ Violation of any invariant constitutes a fork of the protocol.
 - **Representation:** Unsigned integer
 - **Divisibility:** Fixed precision defined at protocol genesis
 
-Floating-point representations are prohibited.
+All LEM values **MUST** be represented as unsigned integers.
+Floating-point, fractional, or approximate representations **MUST NOT** be used under any circumstances.
+
+The divisibility parameter:
+
+- **MUST** be defined at protocol genesis
+- **MUST NOT** be modified after genesis
+- **MUST** be interpreted identically by all compliant implementations
+
+Any implementation that permits non-integer arithmetic or variable precision **is non-compliant**.
 
 ---
 
@@ -201,20 +210,34 @@ State transitions MUST be atomic and deterministic.
 
 ### 13.1 Genesis
 
-- LEM supply is created at genesis
-- Entire initial supply is allocated to a Genesis Reserve address
-- Genesis Reserve has no special privileges
+### 13.1 Genesis
+
+- The total initial LEM supply **MUST** be created at genesis.
+- The entire initial supply **MUST** be allocated to a single address referred to as the **Genesis Reserve**.
+- The Genesis Reserve address **MUST NOT** possess any special privileges beyond standard address ownership.
+
+Genesis allocation **MUST** be deterministic and reproducible by all implementations.
 
 ### 13.2 Minting
 
-- Minting rules, if any, are protocol-defined
-- Minting is deterministic and non-interactive
-- User-triggered minting is prohibited
+Minting, if present, **MUST** satisfy all of the following conditions:
+1. Minting rules **MUST** be defined at the protocol level.
+2. Minting **MUST** be deterministic.
+3. Minting **MUST NOT** depend on:
+   - Human intervention
+   - Governance votes
+   - External signals
+   - Transaction-triggered conditions
+4. User-initiated or transaction-triggered minting **MUST NOT** be permitted.
+   
+If minting rules are undefined, the protocol **MUST** be treated as having a fixed supply.
 
 ### 13.3 Burning
 
-- Burning MUST be explicit
-- Implicit burning mechanisms are prohibited
+- Burning MUST be explicit and verifiable.
+- Burning MUST result in a provable reduction of total circulating supply.
+- Implicit burning mechanisms (for example, unspendable outputs or silent balance decay) MUST NOT be used.
+- Burning MUST NOT be triggered implicitly as a side effect of transfer validation or execution.
 
 ---
 
@@ -234,14 +257,21 @@ Wallets MUST be able to operate autonomously without human input.
 
 ## 15. Ledger and Consensus
 
-LEM is ledger-agnostic.
+LEM is **ledger-agnostic**.
 
-Valid hosting mechanisms include:
+Any ledger or consensus mechanism hosting LEM **MUST** satisfy the following constraints:
+1. The mechanism **MUST** provide a total ordering of transactions.
+2. The mechanism **MUST NOT** alter, reinterpret, or extend LEM transaction semantics.
+3. The mechanism **MUST NOT** introduce metadata that affects balances, ownership, or validity.
+4. The mechanism **MUST** apply state transitions deterministically.
+
+Permissible hosting mechanisms include, but are not limited to:
 - Public blockchains
-- BFT replicated logs
-- Deterministic sequencers
+- Byzantine fault-tolerant replicated logs
+- Deterministic centralized sequencers
 
-Consensus mechanisms determine ordering only and MUST NOT alter LEM semantics.
+Consensus mechanisms are responsible only for transaction ordering and availability.
+They **MUST NOT** influence monetary semantics, ownership rules, or supply behavior.
 
 ---
 
