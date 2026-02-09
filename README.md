@@ -11,7 +11,7 @@ LEMMA exists to answer a single question:
 > How can autonomous software agents exchange value  
 > without human judgment, incentives, or governance embedded in money itself?
 
-This repository contains the **canonical public specification** for LEMMA.
+This repository contains the **canonical public draft specification** for LEMMA.
 
 ---
 
